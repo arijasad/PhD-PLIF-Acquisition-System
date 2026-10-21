@@ -109,7 +109,13 @@ construction contains extra format arguments and does not target the export file
 the fault-input setup tests another pin's path; the fault-triggered stop is commented
 out; and file opens are not consistently checked. The receiver test suite does not
 exercise this controller. Archive it as historical apparatus code, not a verified
-safety controller. No circuit schematic, PCB, wiring diagram or CAD is bundled.
+safety controller. The circuit schematic and PCB layout are available with the archived documentation below.
+
+## Circuit documentation
+
+The existing [Zenodo archive](https://doi.org/10.5281/zenodo.23546103) includes the complete [circuit schematic](https://zenodo.org/records/23546103/files/plif-circuit-schematic.pdf), [PCB layout](https://zenodo.org/records/23546103/files/plif-pcb-layout.pdf) and [electronics guide](https://zenodo.org/records/23546103/files/plif-electronics-guide.txt), alongside the thesis methods extract. The drawings cover the power supply, BeagleBone connections, indicator LEDs, laser interface and interlock circuitry described in thesis Section 2.4.4. They are PDF exports; native electronic-design files and Gerbers are not included.
+
+These supporting drawings were added on 22 October 2026 under CC BY 4.0. The September source ZIP, release tag and DOI are unchanged.
 
 ## Citation and licence
 
