@@ -117,8 +117,14 @@ The existing [Zenodo archive](https://doi.org/10.5281/zenodo.23546103) includes 
 
 These supporting drawings were added on 22 October 2026 under CC BY 4.0. The September source ZIP, release tag and DOI are unchanged.
 
+## Mechanical designs
+
+The same [PLIF archive](https://doi.org/10.5281/zenodo.23546103) includes [mechanical designs](https://zenodo.org/records/23546103/files/plif-mechanical-designs.zip) for the controller enclosure, laser housing and cage, and heat sinks. Fourteen retained source files provide Fusion F3D designs, Parasolid solids, STL exports and dimensioned drawings, with previews and a parts index. These supporting files are licensed under CC BY 4.0 and were added on 22 October 2026; the software version and DOI are unchanged.
+
+The separate [experimental plume apparatus archive](https://doi.org/10.5281/zenodo.23549016) contains intake calculations, nozzle and crossflow models, header-tank components and supports. Its intake documentation follows thesis Section 2.3.3 and Appendix A and records the scaling applied in Ultimaker before printing.
+
 ## Citation and licence
 
 Cite *PLIF acquisition system: Thesis code*, version `thesis-code-2026-09-27`, [doi:10.5281/zenodo.23546103](https://doi.org/10.5281/zenodo.23546103). [CITATION.cff](CITATION.cff) identifies that source snapshot, commit `d9da2ef52887f6dce8b95f780d49ab3349bdc341`.
 
-The source code, including the September release, is available under the [MIT licence](LICENSE). The Zenodo record also includes the thesis apparatus and circuit figures and usage guide under CC BY 4.0. Vendor SDK libraries and examples remain external dependencies.
+The source code, including the September release, is available under the [MIT licence](LICENSE). The Zenodo record also includes the thesis apparatus and circuit figures, mechanical designs and usage guides under CC BY 4.0. Vendor SDK libraries and examples remain external dependencies.
