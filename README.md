@@ -94,3 +94,25 @@ python3 tests/test_camera.py
 ```
 
 They compile the receiver against a simulated SDK and exercise frame copying, TIFF-write error handling and TCP requests. They do not test the vendor runtime, camera, network hardware or laser. A successful build with the installed SDK and the test-image check above are still needed on the acquisition PC.
+
+## Supported environment and known limitations
+
+The intended receiver platform is Linux with a compatible vendor SDK. The existing
+GitHub workflow runs the simulated-SDK checks on Ubuntu 22.04. A recorded success
+for the thesis commit is [available here](https://github.com/arijasad/PhD-PLIF-Acquisition-System/actions/runs/36348469592).
+The same checks did not compile unchanged under macOS in the publication audit
+(MSG_DONTWAIT and mkdtemp declarations). This is not evidence of camera validation.
+The mock output files are labelled MOCK_NOT_TIFF; real TIFF decoding is not tested.
+
+The retained client.c needs apparatus-specific review before use: GPIO export-path
+construction contains extra format arguments and does not target the export file;
+the fault-input setup tests another pin's path; the fault-triggered stop is commented
+out; and file opens are not consistently checked. The receiver test suite does not
+exercise this controller. Archive it as historical apparatus code, not a verified
+safety controller. No circuit schematic, PCB, wiring diagram or CAD is bundled.
+
+## Citation and licence
+
+Cite *PLIF acquisition system: Thesis code*, version `thesis-code-2026-09-27`, [doi:10.5281/zenodo.23546103](https://doi.org/10.5281/zenodo.23546103). [CITATION.cff](CITATION.cff) identifies that source snapshot, commit `d9da2ef52887f6dce8b95f780d49ab3349bdc341`.
+
+The source code, including the September release, is available under the [MIT licence](LICENSE). The Zenodo record also includes the thesis apparatus and circuit figures and usage guide under CC BY 4.0. Vendor SDK libraries and examples remain external dependencies.
