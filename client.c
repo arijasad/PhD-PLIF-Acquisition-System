@@ -35,6 +35,24 @@ static int write_gpio_file(const char *path, const char *value)
         return 0;
 }
 
+
+static int write_gpio_stream(FILE *stream, const char *path, const char *value)
+{
+        if (fseek(stream, 0, SEEK_SET) != 0) {
+                perror(path);
+                return -1;
+        }
+        if (fprintf(stream, "%s", value) < 0) {
+                perror(path);
+                return -1;
+        }
+        if (fflush(stream) != 0) {
+                perror(path);
+                return -1;
+        }
+        return 0;
+}
+
 static int export_gpio(const char *gpio_path, const char *pin)
 {
         char path[MAXSTR];
@@ -110,16 +128,22 @@ void func(int sockfd)
                         fclose(fp); fclose(fq); fclose(fs);
                         return;
                 }
-                fseek(fp, 0, SEEK_SET);
-                fseek(fq, 0, SEEK_SET);
-                fprintf(fq, "1");
-                fseek(fs, 0, SEEK_SET); // Turns the system status pin on
-                fprintf(fs, "1");
+                if (write_gpio_stream(fq, path1, "1") != 0 ||
+                    write_gpio_stream(fs, path3, "1") != 0) {
+                        fclose(fr); fclose(fp); fclose(fq); fclose(fs);
+                        return;
+                }
                 if (state){
-                        fprintf(fp, "1");
+                        if (write_gpio_stream(fp, path, "1") != 0) {
+                                fclose(fr); fclose(fp); fclose(fq); fclose(fs);
+                                return;
+                        }
                         usleep(5000000);//Time between signal
               }else{
-                        fprintf(fp, "0");
+                        if (write_gpio_stream(fp, path, "0") != 0) {
+                                fclose(fr); fclose(fp); fclose(fq); fclose(fs);
+                                return;
+                        }
                         //Request storage of the latest completed camera frame
                         char buff[MAX];
                         int n;
@@ -128,7 +152,12 @@ void func(int sockfd)
                         char buff1[] = "store";
                         n = 0;
 //                      while ((buff[n++] = getchar()) != '\n');
-                        write(sockfd, buff1, sizeof(buff1));
+                        ssize_t sent = write(sockfd, buff1, sizeof(buff1));
+                        if (sent != (ssize_t)sizeof(buff1)) {
+                                perror("store request");
+                                fclose(fr); fclose(fp); fclose(fq); fclose(fs);
+                                return;
+                        }
                         usleep(1000000);//Time the laser is on for
                 }
                 state = ~state; }
