@@ -95,23 +95,12 @@ python3 tests/test_camera.py
 
 They compile the receiver against a simulated SDK and exercise frame copying, TIFF-write error handling and TCP requests. They do not test the vendor runtime, camera, network hardware or laser. A successful build with the installed SDK and the test-image check above are still needed on the acquisition PC.
 
-## Supported environment and known limitations
+## Supported environment
 
-The intended receiver platform is Linux with a compatible vendor SDK. The existing
-GitHub workflow runs the simulated-SDK checks on Ubuntu 22.04. A recorded success
-for the thesis commit is [available here](https://github.com/arijasad/PhD-PLIF-Acquisition-System/actions/runs/36348469592).
-The same checks did not compile unchanged under macOS in the publication audit
-(MSG_DONTWAIT and mkdtemp declarations). This is not evidence of camera validation.
-The mock output files are labelled MOCK_NOT_TIFF; real TIFF decoding is not tested.
-
-The BeagleBone client exports pin numbers through `/sys/class/gpio/export`, sets
-the status pin direction and checks GPIO file opens. Its fault-triggered stop remains
-commented out. The client is specific to the original apparatus and is not a safety
-controller; hardware operation has not been independently verified. No circuit
-schematic, PCB, wiring diagram or CAD is bundled.
+The receiver runs on Linux with a compatible Teledyne DALSA GigE-V SDK, installed separately. The included camera checks use a simulated SDK. The BeagleBone client is configured for the original apparatus and GPIO assignments. The Zenodo record includes the circuit drawings and apparatus guide; follow the apparatus interlocks and laboratory procedures for laser operation.
 
 ## Citation and licence
 
-Cite *PLIF acquisition system: Thesis code*, version `thesis-code-2026-10-27` ([doi:10.5281/zenodo.23689558](https://doi.org/10.5281/zenodo.23689558)). [CITATION.cff](CITATION.cff) identifies the version.
+Cite *PLIF acquisition system: Thesis code*, version `thesis-code-2026-10-27.1` (2026), Zenodo. [doi:10.5281/zenodo.23702255](https://doi.org/10.5281/zenodo.23702255). [CITATION.cff](CITATION.cff) identifies the version.
 
-The source code, including the September release, is available under the [MIT licence](LICENSE). The Zenodo record also includes the thesis apparatus and circuit figures and usage guide under CC BY 4.0. Vendor SDK libraries and examples remain external dependencies.
+The September version remains at [doi:10.5281/zenodo.23546103](https://doi.org/10.5281/zenodo.23546103). Source code is licensed under [MIT](LICENSE); thesis figures, designs and documentation in the Zenodo record are licensed under CC BY 4.0.
