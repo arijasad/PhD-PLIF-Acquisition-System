@@ -7,11 +7,11 @@ authors:
   given-names: Arij
   affiliation: University of Bristol
   orcid: https://orcid.org/0009-0008-2063-4154
-version: thesis-code-2026-10-27
+version: thesis-code-2026-10-27.1
 date-released: '2026-10-27'
 repository-code: https://github.com/arijasad/PhD-PLIF-Acquisition-System
-url: https://doi.org/10.5281/zenodo.23689558
-doi: 10.5281/zenodo.23689558
+url: https://doi.org/10.5281/zenodo.23702255
+doi: 10.5281/zenodo.23702255
 abstract: 'Software for the planar laser-induced fluorescence acquisition apparatus used in Arij Asad''s
   PhD research, Mixing behaviour of plumes, at the University of Bristol. The package contains a Teledyne
   DALSA camera receiver, SDK build helper, network frame-storage request tool, retained BeagleBone controller
