@@ -1,17 +1,17 @@
 cff-version: 1.2.0
 type: software
-message: Please cite this software using the archived version and DOI below.
+message: Please cite this software version using its Zenodo DOI.
 title: 'PLIF acquisition system: Thesis code'
 authors:
 - family-names: Asad
   given-names: Arij
   affiliation: University of Bristol
   orcid: https://orcid.org/0009-0008-2063-4154
-version: thesis-code-2026-09-27
-date-released: '2026-09-27'
-commit: d9da2ef52887f6dce8b95f780d49ab3349bdc341
+version: thesis-code-2026-10-27
+date-released: '2026-10-27'
 repository-code: https://github.com/arijasad/PhD-PLIF-Acquisition-System
-url: https://doi.org/10.5281/zenodo.23546103
+url: https://doi.org/10.5281/zenodo.23689558
+doi: 10.5281/zenodo.23689558
 abstract: 'Software for the planar laser-induced fluorescence acquisition apparatus used in Arij Asad''s
   PhD research, Mixing behaviour of plumes, at the University of Bristol. The package contains a Teledyne
   DALSA camera receiver, SDK build helper, network frame-storage request tool, retained BeagleBone controller
@@ -20,12 +20,13 @@ abstract: 'Software for the planar laser-induced fluorescence acquisition appara
 
   The receiver acquires continuously and stores the latest complete frame on request. Supporting files
   document the acquisition sequence, interface circuits and apparatus assembly, with installation instructions
-  and the archived network protocol. The source preserves GitHub release thesis-code-2026-09-27.
+  and the archived network protocol.
 
 
   The receiver targets Linux with an externally installed GigE-V SDK. Vendor libraries and examples are
-  not included. The BeagleBone program records the original apparatus configuration; its known GPIO issues
-  are described in the guide. Simulated receiver checks are distinct from camera and laser operation.
+  not included. The BeagleBone GPIO setup exports pin numbers through the sysfs export file, configures
+  directions and checks file opens. Simulated receiver checks are distinct from camera and laser operation;
+  hardware behaviour has not been independently verified.
 
 
   Source code is licensed under MIT; thesis figures and documentation are licensed under CC BY 4.0.'
@@ -35,5 +36,4 @@ keywords:
 - GigE Vision
 - BeagleBone
 - research software
-doi: 10.5281/zenodo.23546103
 license: MIT

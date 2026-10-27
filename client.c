@@ -15,6 +15,36 @@
 #define MAX 80
 #define PORT 8080
 #define SA struct sockaddr
+
+static int write_gpio_file(const char *path, const char *value)
+{
+        FILE *fp = fopen(path, "w");
+        if (fp == NULL) {
+                perror(path);
+                return -1;
+        }
+        if (fprintf(fp, "%s", value) < 0) {
+                perror(path);
+                fclose(fp);
+                return -1;
+        }
+        if (fclose(fp) != 0) {
+                perror(path);
+                return -1;
+        }
+        return 0;
+}
+
+static int export_gpio(const char *gpio_path, const char *pin)
+{
+        char path[MAXSTR];
+        snprintf(path, sizeof(path), "%s/gpio%s", gpio_path, pin);
+        if (access(path, F_OK) == 0) {
+                return 0;
+        }
+        snprintf(path, sizeof(path), "%s/export", gpio_path);
+        return write_gpio_file(path, pin);
+}
 void func(int sockfd)
 {
         FILE *fp;
@@ -31,72 +61,55 @@ void func(int sockfd)
         char path2[MAXSTR] = "";
         char path3[MAXSTR] = "";
 
-       //Make sure the pins are exported
-        snprintf(path, MAXSTR, "%s%s%s", GPIOPATH, "/gpio", pin_modulation);
-        if (!access(path, F_OK) == 0){
-                snprintf(path, MAXSTR, "%s%s", GPIOPATH, "gpio", pin_modulation);
-                fp = fopen(path, "w");
-                fprintf(fp, "%s", pin_modulation);
-                fclose(fp);
+        if (export_gpio(GPIOPATH, pin_modulation) != 0 ||
+            export_gpio(GPIOPATH, pin_interlock) != 0 ||
+            export_gpio(GPIOPATH, pin_fault) != 0 ||
+            export_gpio(GPIOPATH, pin_sys) != 0) {
+                return;
         }
-        snprintf(path1, MAXSTR, "%s%s%s", GPIOPATH, "/gpio", pin_interlock);
-        if (!access(path1, F_OK) == 0){
-                snprintf(path1, MAXSTR, "%s%s", GPIOPATH, "gpio", pin_interlock);
-                fq = fopen(path1, "w");
-                fprintf(fq, "%s", pin_interlock);
-                fclose(fq);
-        }
-        snprintf(path2, MAXSTR, "%s%s%s", GPIOPATH, "/gpio", pin_fault);
-        if (!access(path, F_OK) == 0){
-                snprintf(path2, MAXSTR, "%s%s", GPIOPATH, "gpio", pin_fault);
-                fr = fopen(path2, "w");
-                fprintf(fr, "%s", pin_fault);
-                fclose(fr);
-        }
-        snprintf(path3, MAXSTR, "%s%s%s", GPIOPATH, "/gpio", pin_sys);
-        if (!access(path3, F_OK) == 0){
-                snprintf(path3, MAXSTR, "%s%s", GPIOPATH, "gpio", pin_sys);
-                fs = fopen(path3, "w");
-                fprintf(fs, "%s", pin_sys);
-                fclose(fs);
-        }
-        //Make the pins that need to be are outputs
-        snprintf(path, MAXSTR, "%s%s%s%s", GPIOPATH, "/gpio", pin_modulation, "/direction");
-        fp = fopen(path, "w");
-        fprintf(fp, "out");
-        fclose(fp);
-        snprintf(path1, MAXSTR, "%s%s%s%s", GPIOPATH, "/gpio", pin_interlock, "/direction");
-        fq = fopen(path1, "w");
-        fprintf(fq, "out");
-        fclose(fq);
-        snprintf(path3, MAXSTR, "%s%s%s%s", GPIOPATH, "/gpio", pin_sys, "/direction");
-        fs = fopen(path3, "w");
-        // Make the fault pin into an input
-        snprintf(path2, MAXSTR, "%s%s%s%s", GPIOPATH, "/gpio", pin_fault, "/direction");
-        fr = fopen(path2, "w");
-        fprintf(fr, "in");
-        fclose(fr);
 
+        snprintf(path, MAXSTR, "%s/gpio%s/direction", GPIOPATH, pin_modulation);
+        if (write_gpio_file(path, "out") != 0) return;
+        snprintf(path1, MAXSTR, "%s/gpio%s/direction", GPIOPATH, pin_interlock);
+        if (write_gpio_file(path1, "out") != 0) return;
+        snprintf(path3, MAXSTR, "%s/gpio%s/direction", GPIOPATH, pin_sys);
+        if (write_gpio_file(path3, "out") != 0) return;
+        snprintf(path2, MAXSTR, "%s/gpio%s/direction", GPIOPATH, pin_fault);
+        if (write_gpio_file(path2, "in") != 0) return;
 
         //Sends the output signal to the modulation input, interlock and system status
         int state = 0;
-        snprintf(path, MAXSTR, "%s%s%s%s", GPIOPATH, "/gpio", pin_modulation, "/value");
+        char fault_value_path[MAXSTR];
+        snprintf(path, MAXSTR, "%s/gpio%s/value", GPIOPATH, pin_modulation);
         fp = fopen(path, "w");
-        snprintf(path1, MAXSTR, "%s%s%s%s", GPIOPATH, "/gpio", pin_interlock, "/value");
+        if (fp == NULL) { perror(path); return; }
+        snprintf(path1, MAXSTR, "%s/gpio%s/value", GPIOPATH, pin_interlock);
         fq = fopen(path1, "w");
-        snprintf(path3, MAXSTR, "%s%s%s%s", GPIOPATH, "/gpio", pin_sys, "/value");
+        if (fq == NULL) { perror(path1); fclose(fp); return; }
+        snprintf(path3, MAXSTR, "%s/gpio%s/value", GPIOPATH, pin_sys);
         fs = fopen(path3, "w");
+        if (fs == NULL) { perror(path3); fclose(fp); fclose(fq); return; }
+        snprintf(fault_value_path, sizeof(fault_value_path), "%s/gpio%s/value", GPIOPATH, pin_fault);
+        fr = fopen(fault_value_path, "r");
+        if (fr == NULL) { perror(fault_value_path); fclose(fp); fclose(fq); fclose(fs); return; }
 
-        fr = fopen("/sys/class/gpio/gpio8/value","r");
-
-       int val = 0;//This variable contains whether or not there is a fault
+        int val = 0;
         while(1){
-                (void) fscanf(fr,"%d",&val);//Reads the value file to check value of fault pin
-              //  if (val ==1){
-              //      printf("There is a fault with the laser, the program is being terminated\n");
-              //      break;}
-                fclose(fr);
-                fr = fopen("/sys/class/gpio/gpio8/value","r"); //Rechecking the fault pin value
+                if (fscanf(fr, "%d", &val) != 1) {
+                        fclose(fr); fclose(fp); fclose(fq); fclose(fs);
+                        return;
+                }
+                if (fclose(fr) != 0) {
+                        perror(fault_value_path);
+                        fclose(fp); fclose(fq); fclose(fs);
+                        return;
+                }
+                fr = fopen(fault_value_path, "r");
+                if (fr == NULL) {
+                        perror(fault_value_path);
+                        fclose(fp); fclose(fq); fclose(fs);
+                        return;
+                }
                 fseek(fp, 0, SEEK_SET);
                 fseek(fq, 0, SEEK_SET);
                 fprintf(fq, "1");

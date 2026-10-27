@@ -83,7 +83,7 @@ Use feature names and values supported by the camera's XML. Unsupported writes s
 
 ## Controller and checks
 
-`client.c` is the retained BeagleBone GPIO program and is not changed by the camera receiver. Its pin assignments and laser-control behaviour are specific to the original apparatus. It is not a general-purpose safety controller. Establish camera operation with the laser disabled; laser operation requires the apparatus interlocks and approved laboratory procedure.
+`client.c` is the BeagleBone GPIO program, separate from the camera receiver. Its pin assignments and laser-control behaviour are specific to the original apparatus. It is not a general-purpose safety controller. Establish camera operation with the laser disabled; laser operation requires the apparatus interlocks and approved laboratory procedure.
 
 `archive/server_socket_test.c` is the earlier socket-only receiver, not the camera application.
 
@@ -104,27 +104,14 @@ The same checks did not compile unchanged under macOS in the publication audit
 (MSG_DONTWAIT and mkdtemp declarations). This is not evidence of camera validation.
 The mock output files are labelled MOCK_NOT_TIFF; real TIFF decoding is not tested.
 
-The retained client.c needs apparatus-specific review before use: GPIO export-path
-construction contains extra format arguments and does not target the export file;
-the fault-input setup tests another pin's path; the fault-triggered stop is commented
-out; and file opens are not consistently checked. The receiver test suite does not
-exercise this controller. Archive it as historical apparatus code, not a verified
-safety controller. The circuit schematic and PCB layout are available with the archived documentation below.
-
-## Circuit documentation
-
-The existing [Zenodo archive](https://doi.org/10.5281/zenodo.23546103) includes the complete [circuit schematic](https://zenodo.org/records/23546103/files/plif-circuit-schematic.pdf), [PCB layout](https://zenodo.org/records/23546103/files/plif-pcb-layout.pdf) and [electronics guide](https://zenodo.org/records/23546103/files/plif-electronics-guide.txt), alongside the thesis methods extract. The drawings cover the power supply, BeagleBone connections, indicator LEDs, laser interface and interlock circuitry described in thesis Section 2.4.4. They are PDF exports; native electronic-design files and Gerbers are not included.
-
-These supporting drawings were added on 22 October 2026 under CC BY 4.0. The September source ZIP, release tag and DOI are unchanged.
-
-## Mechanical designs
-
-The same [PLIF archive](https://doi.org/10.5281/zenodo.23546103) includes [mechanical designs](https://zenodo.org/records/23546103/files/plif-mechanical-designs.zip) for the controller enclosure, laser housing and cage, and heat sinks. Fourteen retained source files provide Fusion F3D designs, Parasolid solids, STL exports and dimensioned drawings, with previews and a parts index. These supporting files are licensed under CC BY 4.0 and were added on 22 October 2026; the software version and DOI are unchanged.
-
-The separate [experimental plume apparatus archive](https://doi.org/10.5281/zenodo.23549016) contains intake calculations, nozzle and crossflow models, header-tank components and supports. Its intake documentation follows thesis Section 2.3.3 and Appendix A and records the scaling applied in Ultimaker before printing.
+The BeagleBone client exports pin numbers through `/sys/class/gpio/export`, sets
+the status pin direction and checks GPIO file opens. Its fault-triggered stop remains
+commented out. The client is specific to the original apparatus and is not a safety
+controller; hardware operation has not been independently verified. No circuit
+schematic, PCB, wiring diagram or CAD is bundled.
 
 ## Citation and licence
 
-Cite *PLIF acquisition system: Thesis code*, version `thesis-code-2026-09-27`, [doi:10.5281/zenodo.23546103](https://doi.org/10.5281/zenodo.23546103). [CITATION.cff](CITATION.cff) identifies that source snapshot, commit `d9da2ef52887f6dce8b95f780d49ab3349bdc341`.
+Cite *PLIF acquisition system: Thesis code*, version `thesis-code-2026-10-27` ([doi:10.5281/zenodo.23689558](https://doi.org/10.5281/zenodo.23689558)). [CITATION.cff](CITATION.cff) identifies the version.
 
-The source code, including the September release, is available under the [MIT licence](LICENSE). The Zenodo record also includes the thesis apparatus and circuit figures, mechanical designs and usage guides under CC BY 4.0. Vendor SDK libraries and examples remain external dependencies.
+The source code, including the September release, is available under the [MIT licence](LICENSE). The Zenodo record also includes the thesis apparatus and circuit figures and usage guide under CC BY 4.0. Vendor SDK libraries and examples remain external dependencies.
